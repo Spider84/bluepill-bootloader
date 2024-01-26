@@ -48,7 +48,7 @@ static void jump_to_application(void) __attribute__ ((noreturn));
 
 static void jump_to_application(void) {
     vector_table_t* app_vector_table = (vector_table_t*)APP_BASE_ADDRESS;
-    
+
     /* Use the application's vector table */
     target_relocate_vector_table();
 
@@ -60,7 +60,7 @@ static void jump_to_application(void) {
 
     /* Jump to the application entry point */
     app_vector_table->reset();
-    
+
     while (1);
 }
 
@@ -75,19 +75,19 @@ int main(void) {
          jump_to_application();
          return 0;
     }
-#endif  //  SKIP_BOOTLOADER         
-    
+#endif  //  SKIP_BOOTLOADER
+
     //  enable_debug();       //  Uncomment to allow display of debug messages in development devices. NOTE: This will hang if no debugger is attached.
     disable_debug();  //  Uncomment to disable display of debug messages.  For use in production devices.
     platform_setup();     //  STM32 platform setup.
     debug_println("----bootloader");  // debug_flush();
-    
+
     //  target_clock_setup();  //  Clock already setup in platform_setup()
     target_gpio_setup();       //  Initialize GPIO/LEDs if needed
     // test_backup();          //  Test backup.
 
     debug_println("target_get_force_bootloader");  // debug_flush();
-    if (target_get_force_bootloader() || !appValid) {        
+    if (target_get_force_bootloader() || !appValid) {
         {  //  Setup USB
             char serial[USB_SERIAL_NUM_LENGTH+1];
             serial[0] = '\0';
@@ -100,7 +100,7 @@ int main(void) {
         debug_println("usb_setup");  // debug_flush();
         usbd_device* usbd_dev = usb_setup();
         debug_println("usbd polling...");  debug_flush();  ////
-        uint32_t cycleCount = 0;        
+        uint32_t cycleCount = 0;
         while (1) {
             cycleCount++;
             if (cycleCount >= 700) {
@@ -123,7 +123,7 @@ int main(void) {
     } else {
         debug_println("jump_to_application");  debug_flush();
         jump_to_application();
-    }    
+    }
     return 0;
 }
 

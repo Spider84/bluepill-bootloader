@@ -9,7 +9,7 @@ static bool logEnabled = false;  //  Logging is off by default.  Developer must 
 void enable_log(void) { logEnabled = true; debugBuffer[0] = 0; }
 void disable_log(void) { logEnabled = false; debugBuffer[0] = 0; }
 
-//  ARM Semihosting code from 
+//  ARM Semihosting code from
 //  http://www.keil.com/support/man/docs/ARMCC/armcc_pge1358787046598.htm
 //  http://www.keil.com/support/man/docs/ARMCC/armcc_pge1358787048379.htm
 //  http://www.keil.com/support/man/docs/ARMCC/armcc_chr1359125001592.htm
@@ -24,13 +24,13 @@ static int __semihost(int command, void* message) {
 	//  That's how ARM Semihosting sends a command to the debugger to print a message.
 	//  This code MUST be disabled on production devices.
     if (!logEnabled) return -1;
-    __asm( 
+    __asm(
       "mov r0, %[cmd] \n"
-      "mov r1, %[msg] \n" 
+      "mov r1, %[msg] \n"
       "bkpt #0xAB \n"
 	:  //  Output operand list: (nothing)
 	:  //  Input operand list:
-		[cmd] "r" (command), 
+		[cmd] "r" (command),
 		[msg] "r" (message)
 	:  //  Clobbered register list:
 		"r0", "r1", "memory"
@@ -89,9 +89,9 @@ void debug_flush(void) {
 }
 
 void debug_print(size_t l) {
-    //  We only print up to 10 digits, since 32 bits will give max 4,294,967,296.    
+    //  We only print up to 10 digits, since 32 bits will give max 4,294,967,296.
     //  char buf[32]; sprintf(buf, "%u", l); debug_append(buf, strlen(buf)); return; ////  TODO
-    
+
     #define MAX_INT_LENGTH 10
     char buffer[MAX_INT_LENGTH + 1];
     int size = MAX_INT_LENGTH + 1;
@@ -118,7 +118,7 @@ void debug_print(size_t l) {
 }
 
 void debug_print(int i) {
-    if (i == 0) { debug_append("0", 1); } 
+    if (i == 0) { debug_append("0", 1); }
     else if (i >= 0) { debug_print((size_t) i); }
     else {  // i < 0.
         debug_append("-", 1);
@@ -146,7 +146,8 @@ void debug_print(float f) {
 }
 
 void debug_begin(uint16_t bps) {
-    //  TODO
+    (void)bps;
+    //TODO
 }
 
 void debug_write(uint8_t ch) {

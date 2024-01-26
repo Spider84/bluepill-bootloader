@@ -106,6 +106,17 @@ static const struct usb_device_descriptor dev = {
 };
 
 #ifdef INTF_MSC
+usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
+				 uint8_t ep_in, uint8_t ep_in_size,
+				 uint8_t ep_out, uint8_t ep_out_size,
+				 const char *vendor_id,
+				 const char *product_id,
+				 const char *product_revision_level,
+				 const uint32_t block_count,
+				 int (*read_block)(uint32_t lba, uint8_t *copy_to),
+				 int (*write_block)(uint32_t lba, const uint8_t *copy_from),
+				 uint8_t msc_interface_index0);
+
 //  MSC Endpoints
 static const struct usb_endpoint_descriptor msc_endp[] = {{
 	.bLength = USB_DT_ENDPOINT_SIZE,
@@ -277,17 +288,17 @@ static const struct usb_interface_descriptor data_iface = {
 
 //  All USB Interfaces
 static const struct usb_interface interfaces[] = {
-#ifdef INTF_DFU    
+#ifdef INTF_DFU
     {
         .num_altsetting = 1,
         .altsetting = &dfu_iface,  //  Index must sync with INTF_DFU.
-    }, 
+    },
 #endif  //  INTF_DFU
-#ifdef INTF_MSC    
+#ifdef INTF_MSC
     {
         .num_altsetting = 1,
         .altsetting = &msc_iface,  //  Index must sync with INTF_MSC.
-    }, 	
+    },
 #endif  //  INTF_MSC
 #ifdef INTF_COMM
     {
@@ -296,7 +307,7 @@ static const struct usb_interface interfaces[] = {
 	    .iface_assoc = &cdc_iface_assoc,  //  Mandatory for composite device with multiple interfaces.
 #endif  //  SERIAL_USB_INTERFACE
         .altsetting = &comm_iface,  //  Index must sync with INTF_COMM.
-    }, 
+    },
     {
         .num_altsetting = 1,
         .altsetting = &data_iface,  //  Index must sync with INTF_DATA.
@@ -320,9 +331,9 @@ static const struct usb_config_descriptor config = {
 #ifdef USB21_INTERFACE
 //  BOS Capabilities for WebUSB and Microsoft Platform
 static const struct usb_device_capability_descriptor* capabilities[] = {
-	(const struct usb_device_capability_descriptor*) 
+	(const struct usb_device_capability_descriptor*)
         &webusb_platform_capability_descriptor,
-	(const struct usb_device_capability_descriptor*) 
+	(const struct usb_device_capability_descriptor*)
         &microsoft_platform_capability_descriptor,
 };
 
@@ -337,24 +348,24 @@ static const struct usb_bos_descriptor bos_descriptor = {
 
 /* Buffer to be used for control requests. */
 static uint8_t usbd_control_buffer[USB_CONTROL_BUF_SIZE] __attribute__ ((aligned (2)));
-usbd_device* usbd_dev = NULL;
+// usbd_device* usbd_dev = NULL;
 
 usbd_device* usb_setup(void) {
     int num_strings = sizeof(usb_strings) / sizeof(const char*);
     // debug_print("usb_setup num_strings "); debug_print_int(num_strings); debug_println(""); // debug_flush(); ////
     const usbd_driver* driver = target_usb_init();
-    usbd_dev = usbd_init(driver, &dev, &config, 
+    usbd_device* usbd_dev = usbd_init(driver, &dev, &config,
         usb_strings, num_strings,
         usbd_control_buffer, sizeof(usbd_control_buffer));
 
     //  The following USB setup functions will call aggregate_register_callback() to register callbacks.
-#ifdef INTF_DFU    
+#ifdef INTF_DFU
     dfu_setup(usbd_dev, &target_manifest_app, NULL, NULL);
 #endif  //  INTF_DFU
-#ifdef INTF_MSC    
+#ifdef INTF_MSC
     msc_setup(usbd_dev);
 #endif  //  INTF_MSC
-#ifdef INTF_COMM    
+#ifdef INTF_COMM
     cdc_setup(usbd_dev);
 #endif  //  INTF_COMM
 
@@ -365,7 +376,7 @@ usbd_device* usb_setup(void) {
 	winusb_setup(usbd_dev, INTF_DFU);  //  Previously INTF_DFU
 #endif  //  USB21_INTERFACE
 
-    //  Set the aggregate callback.    
+    //  Set the aggregate callback.
 	int status = usbd_register_set_config_callback(usbd_dev, set_aggregate_callback);
     if (status < 0) { debug_println("*** usb_setup failed"); debug_flush(); }
 
@@ -374,31 +385,20 @@ usbd_device* usb_setup(void) {
     return usbd_dev;
 }
 
-#ifdef INTF_MSC    
-extern usbd_mass_storage *custom_usb_msc_init(usbd_device *usbd_dev,
-				 uint8_t ep_in, uint8_t ep_in_size,
-				 uint8_t ep_out, uint8_t ep_out_size,
-				 const char *vendor_id,
-				 const char *product_id,
-				 const char *product_revision_level,
-				 const uint32_t block_count,
-				 int (*read_block)(uint32_t lba, uint8_t *copy_to),
-				 int (*write_block)(uint32_t lba, const uint8_t *copy_from),
-				 uint8_t msc_interface_index0);
-
+#ifdef INTF_MSC
 void msc_setup(usbd_device* usbd_dev0) {
     //  debug_println("msc_setup"); ////
 #ifdef RAM_DISK
     ramdisk_init();
 #endif  //  RAM_DISK
-    
-    custom_usb_msc_init(usbd_dev0, MSC_IN, MAX_USB_PACKET_SIZE, MSC_OUT, MAX_USB_PACKET_SIZE, 
-        MSC_VENDOR_ID, MSC_PRODUCT_ID, MSC_PRODUCT_REVISION_LEVEL, 
-#ifdef RAM_DISK    
+
+    custom_usb_msc_init(usbd_dev0, MSC_IN, MAX_USB_PACKET_SIZE, MSC_OUT, MAX_USB_PACKET_SIZE,
+        MSC_VENDOR_ID, MSC_PRODUCT_ID, MSC_PRODUCT_REVISION_LEVEL,
+#ifdef RAM_DISK
         ramdisk_blocks(), ramdisk_read, ramdisk_write,
 #else
         UF2_NUM_BLOCKS, read_block, write_block,
-#endif  //  RAM_DISK        
+#endif  //  RAM_DISK
         INTF_MSC
     );
 }
@@ -415,8 +415,9 @@ static struct control_callback_struct control_callback[MAX_CONTROL_CALLBACK];
 static usbd_set_config_callback config_callback[MAX_CONTROL_CALLBACK];
 
 int aggregate_register_config_callback(
-    usbd_device *usbd_dev,
+    usbd_device *dev,
 	usbd_set_config_callback callback) {
+    (void)dev;
     //  Register the USB config callback.  We do this to overcome the 4 callback limit.
 	int i;
 	for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
@@ -432,19 +433,20 @@ int aggregate_register_config_callback(
 }
 
 int aggregate_register_callback(
-    usbd_device *usbd_dev, 
+    usbd_device *usbd_dev,
     uint8_t type,
     uint8_t type_mask,
     usbd_control_callback callback) {
+    (void)usbd_dev;
     // Register application callback function for handling USB control requests.  We aggregate here so we can handle more than 4 callbacks.
     // debug_println("aggregate_register_callback"); ////
 	int i;
 	for (i = 0; i < MAX_CONTROL_CALLBACK; i++) {
-		if (control_callback[i].cb) { 
+		if (control_callback[i].cb) {
             //  If already exists, skip.
             if (control_callback[i].type == type &&
                 control_callback[i].type_mask == type_mask &&
-                control_callback[i].cb == callback) { 
+                control_callback[i].cb == callback) {
                     //  debug_println("callback exists"); ////
                     return 0;
                 }
@@ -469,10 +471,10 @@ static uint8_t usb_descriptor_index(uint16_t wValue) {
 
 uint16_t device_address = (uint16_t) -1;
 
-static int aggregate_callback(
+static enum usbd_request_return_codes aggregate_callback(
     usbd_device *usbd_dev,
-	struct usb_setup_data *req, 
-    uint8_t **buf, 
+	struct usb_setup_data *req,
+    uint8_t **buf,
     uint16_t *len,
 	usbd_control_complete_callback *complete) {
     //  This callback is called whenever a USB request is received.  We route to the right driver callbacks.
@@ -482,7 +484,7 @@ static int aggregate_callback(
         if (control_callback[i].cb == NULL) { break; }
         if ((req->bmRequestType & control_callback[i].type_mask) == control_callback[i].type) {
             result = control_callback[i].cb(
-                usbd_dev, 
+                usbd_dev,
                 req,
                 buf,
                 len,
@@ -496,7 +498,7 @@ static int aggregate_callback(
     if (!(req->bmRequestType == 0x80 && req->bRequest == 0x06)) {
         //  Dump the packet if not GET_DESCRIPTOR.
 	    dump_usb_request(">> ", req); debug_flush(); ////
-    } 
+    }
 	return USBD_REQ_NEXT_CALLBACK;
 }
 
@@ -520,7 +522,7 @@ static void set_aggregate_callback(
         0,  //  Register for all notifications.
         0,
 		aggregate_callback);
-	if (status < 0) { debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush(); }  
+	if (status < 0) { debug_println("*** ERROR: set_aggregate_callback failed"); debug_flush(); }
 }
 
 void usb_set_serial_number(const char* serial) {
@@ -564,8 +566,8 @@ void dump_usb_request(const char *msg, struct usb_setup_data *req) {
         } else {
             debug_print(",");
         }
-        debug_print(" t "); debug_printhex(desc_type); 	
-        debug_print(" i "); debug_printhex(desc_index); 	
+        debug_print(" t "); debug_printhex(desc_type);
+        debug_print(" i "); debug_printhex(desc_index);
     }
     debug_println("");
 }

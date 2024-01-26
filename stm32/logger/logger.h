@@ -1,4 +1,4 @@
-//  Log messages to the debug console.  Note: Logging will be buffered in memory.  Messages will not 
+//  Log messages to the debug console.  Note: Logging will be buffered in memory.  Messages will not
 //  be displayed until debug_flush() is called.
 #ifndef LOGGER_H_
 #define LOGGER_H_

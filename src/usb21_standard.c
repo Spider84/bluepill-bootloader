@@ -58,11 +58,11 @@ static uint16_t build_bos_descriptor(const struct usb_bos_descriptor *bos,
 
 static const struct usb_bos_descriptor* usb21_bos;
 
-static int usb21_standard_get_descriptor(usbd_device* usbd_dev,
+static enum usbd_request_return_codes usb21_standard_get_descriptor(usbd_device* usbd_dev,
 											struct usb_setup_data *req,
 											uint8_t **buf, uint16_t *len,
 											usbd_control_complete_callback* complete) {
-	//  Handle a BOS request: 
+	//  Handle a BOS request:
 	//  >> typ 80, req 06, val 0f00, idx 0000, len 0005, GET_DES_BOS t 0f i 00
 	(void)complete;
 	(void)usbd_dev;
@@ -111,16 +111,16 @@ void usb21_setup(usbd_device* usbd_dev, const struct usb_bos_descriptor* binary_
 
 Captured BOS from Blue Pill: (57 bytes)
 
-05 0f 39 00 02 
-18 10 05 00 
-38 b6 08 34 a9 09 a0 47 8b fd a0 76 88 15 b6 65 
-00 01 
-22 
-01 
+05 0f 39 00 02
+18 10 05 00
+38 b6 08 34 a9 09 a0 47 8b fd a0 76 88 15 b6 65
+00 01
+22
+01
 
-1c 10 05 00 
-df 60 dd d8 89 45 c7 4c 9c d2 65 9d 9e 64 8a 9f 
-00 00 03 06 
+1c 10 05 00
+df 60 dd d8 89 45 c7 4c 9c d2 65 9d 9e 64 8a 9f
+00 00 03 06
 b2 00 21 00
 
 Captured BOS from microbit:

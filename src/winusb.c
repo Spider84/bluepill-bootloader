@@ -77,7 +77,7 @@ static struct msos20_descriptor_set_struct msos20_descriptor_set = {
 			'a', 0x00, 'c', 0x00, 'e', 0x00, 'G', 0x00, 'U', 0x00, 'I', 0x00,
 			'D', 0x00, 's', 0x00, 0x00, 0x00
 		},
-		.wPropertyDataLength = MSOS20_PROPERTY_DATA_LENGTH,  //  Length of property data		
+		.wPropertyDataLength = MSOS20_PROPERTY_DATA_LENGTH,  //  Length of property data
 		.propertyData = {  // Property data: {9D32F82C-1FB2-4486-8501-B6145B5BA336}
 			'{', 0x00, '9', 0x00, 'D', 0x00, '3', 0x00, '2', 0x00, 'F', 0x00,
 			'8', 0x00, '2', 0x00, 'C', 0x00, '-', 0x00, '1', 0x00, 'F', 0x00,
@@ -137,7 +137,7 @@ static const struct winusb_extended_properties_descriptor guid = {
 	}
 };
 
-static int winusb_descriptor_request(usbd_device *usbd_dev,
+static enum usbd_request_return_codes winusb_descriptor_request(usbd_device *usbd_dev,
 					struct usb_setup_data *req,
 					uint8_t **buf, uint16_t *len,
 					usbd_control_complete_callback* complete) {
@@ -156,7 +156,7 @@ static int winusb_descriptor_request(usbd_device *usbd_dev,
 	return USBD_REQ_NEXT_CALLBACK;
 }
 
-static int winusb_control_vendor_request(usbd_device *usbd_dev,
+static enum usbd_request_return_codes winusb_control_vendor_request(usbd_device *usbd_dev,
 					struct usb_setup_data *req,
 					uint8_t **buf, uint16_t *len,
 					usbd_control_complete_callback* complete) {  (void)complete; (void)usbd_dev;
@@ -179,7 +179,7 @@ static int winusb_control_vendor_request(usbd_device *usbd_dev,
 		*len = MIN(*len, MSOS20_DESCRIPTOR_SET_SIZE);
 		status = USBD_REQ_HANDLED;
 
-		uint8_t *b = (uint8_t*) &msos20_descriptor_set; int i;
+		uint8_t *b = (uint8_t*) &msos20_descriptor_set; unsigned int i;
 		debug_print_unsigned(MSOS20_DESCRIPTOR_SET_SIZE); debug_print(" / ");
 		for (i = 0; i < MSOS20_DESCRIPTOR_SET_SIZE; i++) { debug_printhex(b[i]); debug_print(" "); } debug_println(""); debug_flush(); ////
 

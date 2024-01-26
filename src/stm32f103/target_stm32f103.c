@@ -180,7 +180,7 @@ void target_manifest_app(void) {
 bool target_get_force_app(void) {
     if (backup_read(BKP0) == CMD_APP) {
         backup_write(BKP0, 0);
-        return true;        
+        return true;
     }
     return false;
 }
@@ -194,7 +194,7 @@ bool target_get_force_bootloader(void) {
         backup_write(BKP0, 0);
         return true;
     }
-    if (cmd == CMD_APP) {        
+    if (cmd == CMD_APP) {
         // we were told to reset into app
         backup_write(BKP0, 0);
         return false;
@@ -265,9 +265,9 @@ bool target_flash_program_array(uint16_t* dest, const uint16_t* data, size_t hal
 
     const uint16_t* flash_end = get_flash_end();
     debug_print("target_flash_program_array dest "); debug_print_unsigned((size_t) dest); ////
-    debug_print(", data "); debug_print_unsigned((size_t) data); 
-    debug_print(", half_word_count "); debug_print_unsigned((size_t) half_word_count); 
-    debug_print(", flash_end "); debug_print_unsigned((size_t) flash_end); 
+    debug_print(", data "); debug_print_unsigned((size_t) data);
+    debug_print(", half_word_count "); debug_print_unsigned((size_t) half_word_count);
+    debug_print(", flash_end "); debug_print_unsigned((size_t) flash_end);
     debug_println(""); debug_flush(); ////
     while (half_word_count > 0) {
         /* Avoid writing past the end of flash */

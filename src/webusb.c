@@ -71,7 +71,7 @@ const struct microsoft_platform_descriptor microsoft_platform_capability_descrip
 
 static const char* webusb_https_url;
 
-static int webusb_control_vendor_request(usbd_device *usbd_dev,
+static enum usbd_request_return_codes webusb_control_vendor_request(usbd_device *usbd_dev,
 									 struct usb_setup_data *req,
 									 uint8_t **buf, uint16_t *len,
 									 usbd_control_complete_callback* complete) {

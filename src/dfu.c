@@ -88,7 +88,7 @@ static inline void dfu_set_status(enum dfu_status status) {
 static void dfu_on_download_complete(usbd_device* usbd_dev, struct usb_setup_data* req) {
     (void)usbd_dev;
     (void)req;
-    
+
     dfu_set_state(STATE_DFU_MANIFEST_SYNC);
 }
 
@@ -127,7 +127,7 @@ static void dfu_on_manifest_request(usbd_device* usbd_dev, struct usb_setup_data
     }
 }
 
-static int dfu_control_class_request(usbd_device *usbd_dev,
+static enum usbd_request_return_codes dfu_control_class_request(usbd_device *usbd_dev,
                                      struct usb_setup_data *req,
                                      uint8_t **buf, uint16_t *len,
                                      usbd_control_complete_callback* complete) {
@@ -238,7 +238,7 @@ static int dfu_control_class_request(usbd_device *usbd_dev,
             switch (current_dfu_state) {
                 case STATE_DFU_IDLE: {
                     current_dfu_offset = 0;
-                    /* Fall through */
+                    __attribute__ ((fallthrough));
                 }
                 case STATE_DFU_UPLOAD_IDLE: {
                     *buf = (uint8_t*)(APP_BASE_ADDRESS + current_dfu_offset);
@@ -282,7 +282,7 @@ static void dfu_set_config(usbd_device* usbd_dev, uint16_t wValue) {
         usbd_dev,
         CONTROL_CALLBACK_TYPE,
         CONTROL_CALLBACK_MASK,
-        dfu_control_class_request);        
+        dfu_control_class_request);
 	if (status < 0) { debug_println("*** dfu_set_config failed"); debug_flush(); }
 }
 
@@ -300,7 +300,7 @@ void dfu_setup(usbd_device* usbd_dev,
         usbd_dev,
         CONTROL_CALLBACK_TYPE,
         CONTROL_CALLBACK_MASK,
-        dfu_control_class_request);        
+        dfu_control_class_request);
 	if (status < 0) { debug_println("*** dfu_setup failed"); debug_flush(); }
 
     //  Re-register the callback in case the USB restarts.

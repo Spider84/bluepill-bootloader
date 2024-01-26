@@ -9,7 +9,7 @@
 #include <libopencm3/cm3/nvic.h>
 #include "bluepill.h"
 
-//  This is the tick function we will call every millisecond.  
+//  This is the tick function we will call every millisecond.
 //  Usually points to os_tick() in cocoOS.
 static void (*tickFunc)(void) = NULL;
 static volatile uint32_t tickCount = 0;  //  Number of millisecond ticks elapsed.
@@ -22,10 +22,10 @@ static void rtc_setup(void) {
 	rtc_interrupt_disable(RTC_ALR);
 	rtc_interrupt_disable(RTC_OW);
 
-	//  Select Oscillator: 
-	//  RCC_HSE: 62.5 kHz, fastest oscillator, doesn't work in Stop or Standby Low Power mode. 
-	//  RCC_LSE: 32.768 kHz, slowest oscillator, works in Stop or Standby Low Power mode. 
-	//  RCC_LSI: 40 kHz, works in Stop or Standby Low Power mode. 
+	//  Select Oscillator:
+	//  RCC_HSE: 62.5 kHz, fastest oscillator, doesn't work in Stop or Standby Low Power mode.
+	//  RCC_LSE: 32.768 kHz, slowest oscillator, works in Stop or Standby Low Power mode.
+	//  RCC_LSI: 40 kHz, works in Stop or Standby Low Power mode.
 	//  We choose RCC_LSE because it can be used to wake up in Low Power mode.
 #ifdef LIBOPENCM3_RCC_LEGACY      //  If using older version of libopencm3 (PlatformIO)...
 	rtc_awake_from_off(LSE);      //  Oscillator is named LSE.
@@ -34,7 +34,7 @@ static void rtc_setup(void) {
 	rtc_awake_from_off(RCC_LSE);  //  Oscillator is named RCC_LSE.
 	// rtc_awake_from_off(RCC_HSE);  //  Oscillator is named RCC_HSE.
 #endif  //  LIBOPENCM3_RCC_LEGACY
-	
+
 	rtc_set_prescale_val(32);        //  For RCC_LSE: 1 millisecond tick (should actually be 32.7)
 	// rtc_set_prescale_val(62);     //  For RCC_HSE: 1 millisecond tick (should actually be 62.5)
 	// rtc_set_prescale_val(62500);  //  For RCC_HSE: 1 second tick
@@ -59,7 +59,7 @@ static void rtc_setup(void) {
 void platform_start_timer(void (*tickFunc0)(void)) {
     //  Start the STM32 Timer to generate interrupt ticks to perform task switching.
   	tickFunc = tickFunc0;  //  Allow tickFunc to be modified at every call to platform_start_timer().
-	
+
 	//  But system timer will only be started once.
 	static bool timerStarted = false;
 	if (timerStarted) { return; }
@@ -107,7 +107,7 @@ uint32_t millis(void) {
 	//  Compatible with Arduino's millis() function.
 	//  TODO: Compensate for clock slowdown because we truncated RCC_LSE 32.768 kHz to 32.
 	return rtc_get_counter_val();  //  More accurate, uses hardware counters.
-	// return tickCount;  //  Less accurate, excludes ARM Semihosting time. 
+	// return tickCount;  //  Less accurate, excludes ARM Semihosting time.
 }
 
 uint32_t platform_alarm_count(void) {

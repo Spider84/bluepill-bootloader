@@ -456,7 +456,7 @@ static const uint8_t MSC_Page80_Inquiry_Data[LENGTH_INQUIRY_PAGE80] = {
 		0x00,  //  Reserved
 		(LENGTH_INQUIRY_PAGE80 - 4),  //  Page Length: 8 bytes
 		//  Serial number in ASCII (8 bytes) starts here.  Padded with spaces.
-		'1', '2', '3', '4', 
+		'1', '2', '3', '4',
 		'5', '6', '7', '8',
 };
 
@@ -529,7 +529,7 @@ static void scsi_inquiry(usbd_mass_storage *ms,
 					set_sbc_status_good(ms);
 					break;
 				}
-#ifdef NOTUSED				
+#ifdef NOTUSED
 				case 0x83: {  //  Page 0x83 - Device Identification (Section 5.4.11)
 					uint8_t *pPage = (uint8_t *)MSC_Page83_Inquiry_Data;
 					size_t len = LENGTH_INQUIRY_PAGE83;
@@ -540,7 +540,7 @@ static void scsi_inquiry(usbd_mass_storage *ms,
 					set_sbc_status_good(ms);
 					break;
 				}
-#endif  //  NOTUSED				
+#endif  //  NOTUSED
 				default:
 					debug_print("scsi_inquiry notsup "); debug_printhex(page_code); debug_println(""); debug_flush(); ////
 			}
@@ -670,25 +670,25 @@ static void msc_data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 			scsi_command(ms, trans, EVENT_CBW_VALID);
 
 #ifdef NOTUSED
-            debug_print("msc_data_rx_cb byte_count "); 
+            debug_print("msc_data_rx_cb byte_count ");
             debug_print_unsigned(trans->byte_count);
-            debug_print(", bytes_to_read "); 
+            debug_print(", bytes_to_read ");
             debug_print_unsigned(trans->bytes_to_read);
-            debug_print(", CBWCB "); 
+            debug_print(", CBWCB ");
             debug_printhex(trans->cbw.cbw.CBWCB[0]);
             debug_println(""); debug_flush(); ////
-#endif  //  NOTUSED            
+#endif  //  NOTUSED
 
 			if (trans->byte_count < trans->bytes_to_read) {
 				/* We must wait until there is something to
 				 * read again. */
-#ifdef NOTUSED				
-                debug_print("msc_data_rx_cb wait byte_count "); 
+#ifdef NOTUSED
+                debug_print("msc_data_rx_cb wait byte_count ");
                 debug_print_unsigned(trans->byte_count);
-                debug_print(", bytes_to_read "); 
+                debug_print(", bytes_to_read ");
                 debug_print_unsigned(trans->bytes_to_read);
                 debug_println(""); // debug_flush(); ////
-#endif  //  NOTUSED				
+#endif  //  NOTUSED
 
 				return;
 			}
@@ -865,7 +865,7 @@ static uint8_t msc_interface_index = 0;
 /** @brief Handle various control requests related to the msc storage
  *	   interface.
  */
-static int msc_control_request(usbd_device *usbd_dev,
+static enum usbd_request_return_codes msc_control_request(usbd_device *usbd_dev,
 				struct usb_setup_data *req, uint8_t **buf, uint16_t *len,
 				usbd_control_complete_callback *complete)
 {

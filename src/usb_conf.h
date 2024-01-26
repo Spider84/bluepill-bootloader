@@ -77,7 +77,7 @@ extern int aggregate_register_config_callback(
     usbd_device *usbd_dev,
 	usbd_set_config_callback callback);
 extern int aggregate_register_callback(
-    usbd_device *usbd_dev, 
+    usbd_device *usbd_dev,
     uint8_t type,
     uint8_t type_mask,
     usbd_control_callback callback);

@@ -55,7 +55,7 @@ static enum usbd_request_return_codes cdcacm_control_request(
 			//  Windows requires this request, not Mac or Linux.
 			//  From https://github.com/PX4/Bootloader/blob/master/stm32/cdcacm.c
 			if ( *len < sizeof(struct usb_cdc_line_coding) ) {
-				debug_print("*** cdcacm_control notsupp line_coding "); debug_print_unsigned(sizeof(struct usb_cdc_line_coding)); 
+				debug_print("*** cdcacm_control notsupp line_coding "); debug_print_unsigned(sizeof(struct usb_cdc_line_coding));
 				debug_print(", len "); debug_print_unsigned(*len);
 				debug_println(""); debug_flush(); ////
 				return USBD_REQ_NOTSUPP;
@@ -66,7 +66,7 @@ static enum usbd_request_return_codes cdcacm_control_request(
 		}
 		case USB_CDC_REQ_SET_LINE_CODING: {
 			if ( *len < sizeof(struct usb_cdc_line_coding) ) {
-				debug_print("*** cdcacm_control notsupp line_coding "); debug_print_unsigned(sizeof(struct usb_cdc_line_coding)); 
+				debug_print("*** cdcacm_control notsupp line_coding "); debug_print_unsigned(sizeof(struct usb_cdc_line_coding));
 				debug_print(", len "); debug_print_unsigned(*len);
 				debug_println(""); debug_flush(); ////
 				return USBD_REQ_NOTSUPP;
@@ -97,7 +97,7 @@ cdcacm_data_rx_cb(
     cdcbuf[pos] = 0;
 
 	usbd_ep_write_packet(usbd_dev, DATA_IN, cdcbuf, pos); ////  Echo the packet.
-	
+
     debug_print("["); debug_println(cdcbuf); debug_print("]"); // debug_flush(); ////
 }
 
@@ -106,6 +106,7 @@ cdcacm_comm_cb(
   usbd_device *usbd_dev,
   uint8_t ep __attribute__((unused))
 ) {
+	(void)usbd_dev;
 	debug_println("comm"); debug_flush();
 }
 

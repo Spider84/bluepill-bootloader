@@ -94,16 +94,25 @@ void target_panic(int statusCode) {
 //  These functions must be located here or the compiler will pull in the standard C library versions.
 //  From https://github.com/lancaster-university/codal-arduino-uno/blob/master/source/codal_target_hal.cpp
 
-extern "C" void __cxa_pure_virtual() {
-	//  Disable exceptions for abstract classes. See https://arobenko.gitbooks.io/bare_metal_cpp/content/compiler_output/abstract_classes.html
-    target_panic(1000);
-}
+extern "C" {
 
-// define new and delete.
-extern "C" void *operator new(size_t objsize) {
-    return malloc(objsize);
-}
+	void __cxa_pure_virtual() {
+		//  Disable exceptions for abstract classes. See https://arobenko.gitbooks.io/bare_metal_cpp/content/compiler_output/abstract_classes.html
+		target_panic(1000);
+	}
 
-extern "C" void operator delete(void* obj) {
-    free(obj);
+	// define new and delete.
+	void *operator new(size_t objsize) {
+		return malloc(objsize);
+	}
+
+	void operator delete(void* obj) {
+		free(obj);
+	}
+
+	void operator delete(void* obj, size_t sz) {
+		(void)sz;
+		free(obj);
+	}
+
 }

@@ -46,7 +46,7 @@ struct microsoft_platform_descriptor {
 	uint8_t bDescriptorType;
 	uint8_t bDevCapabilityType;
 	uint8_t bReserved;
-	uint8_t platformCapabilityUUID[16];	
+	uint8_t platformCapabilityUUID[16];
 	uint8_t dwWindowsVersion[4];  //  Windows version e.g. 0x00, 0x00, 0x03, 0x06
 	uint16_t wMSOSDescriptorSetTotalLength; //  Descriptor set length e.g. 0xb2
 	uint8_t bMS_VendorCode; //  Vendor code e.g. 0x20
@@ -99,7 +99,7 @@ struct msos20_feature_reg_property_struct {
 	uint16_t wPropertyDataType;    //  Should be WINUSB_EXTENDED_PROPERTIES_MULTISZ_DATA_TYPE. Type of registry property
 	uint16_t wPropertyNameLength;  //  Should be MSOS20_PROPERTY_NAME_LENGTH. Length of property name
 	uint8_t  propertyName[MSOS20_PROPERTY_NAME_LENGTH];  // Property name (DeviceInterfaceGUIDs)
-	uint16_t wPropertyDataLength;  //  Should be MSOS20_PROPERTY_DATA_LENGTH. Length of property data	
+	uint16_t wPropertyDataLength;  //  Should be MSOS20_PROPERTY_DATA_LENGTH. Length of property data
 	uint8_t  propertyData[MSOS20_PROPERTY_DATA_LENGTH];  // Property data
 } __attribute__((packed));
 #define MSOS20_FEATURE_REG_PROPERTY_SIZE sizeof(struct msos20_feature_reg_property_struct)  //  Should be 0x84 (132)
@@ -122,7 +122,7 @@ struct msos20_descriptor_set_struct {
 	struct msos20_subset_header_function_struct      subset_header_function;
 
 	//  Compatible ID descriptor
-	struct msos20_feature_compatible_id_struct       feature_compatible_id; 
+	struct msos20_feature_compatible_id_struct       feature_compatible_id;
 
 	//  Registry property descriptor: The properties that will be written to Windows registry.
 	struct msos20_feature_reg_property_struct        feature_reg_property;

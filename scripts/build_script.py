@@ -1,12 +1,12 @@
 Import("env", "projenv")
 
 # access to global build environment
-print env
+print(env)
 
 # access to project build environment (is used source files in "src" folder)
-print projenv
+print(projenv)
 
-print "Current build targets", map(str, BUILD_TARGETS)
+print("Current Build targets", BUILD_TARGETS)
 
 # Dump build environment (for debug purpose)
 # print env.Dump()
@@ -18,6 +18,7 @@ env.AddPostAction(
     env.VerboseAction(" ".join([
         "python", "src/blink/uf2conv.py", 
             "--convert", 
+            "--family", "STM32F1",
             "--base", "0x08004000", 
             "--output", "$PROJECT_DIR/${PROGNAME}.uf2", 
             "$BUILD_DIR/${PROGNAME}.bin"
@@ -31,6 +32,7 @@ env.AddPostAction(
     env.VerboseAction(" ".join([
         "python", "src/blink/uf2conv.py", 
             "--convert", 
+            "--family", "STM32F1",
             "--base", "0x08004000", 
             "--output", "$PROJECT_DIR/${PROGNAME}.bin",
             "$PROJECT_DIR/${PROGNAME}.uf2"
@@ -42,21 +44,29 @@ env.AddPostAction(
 #env.ProcessUnFlags("-DVECT_TAB_ADDR")
 #env.Append(CPPDEFINES=("VECT_TAB_ADDR", 0x123456789))
 
+# General options that are passed to the C compiler (C only; not C++).
+env.Append(CFLAGS=["-std=gnu17"])
+
+# General options that are passed to the C++ compiler
+env.Append(CXXFLAGS=["-std=gnu++17", "-fwrapv", "-fno-rtti", "-fno-threadsafe-statics"])
+
+
+
 #
 # Upload actions
 #
 
-def before_upload(source, target, env):
-    print "before_upload"
-    # do some actions
+# def before_upload(source, target, env):
+#     print("before_upload")
+#     # do some actions
 
-    # call Node.JS or other script
-    env.Execute("node --version")
+#     # call Node.JS or other script
+#     env.Execute("node --version")
 
 
-def after_upload(source, target, env):
-    print "after_upload"
-    # do some actions
+# def after_upload(source, target, env):
+#     print("after_upload")
+#     # do some actions
 
 #env.AddPreAction("upload", before_upload)
 #env.AddPostAction("upload", after_upload)
