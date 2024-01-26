@@ -11,17 +11,15 @@ GTAGS
 # ignore build artifacts
 *.d
 *.o
-# *.bin
+*.bin
 *.hex
 *.elf
 *.axf
-# *.map
-# *.uf2
+*.map
+*.uf2
+*.old
 
 # ignore local makefile settings
 src/local.mk
-bootloader.map
-firmware.bin
-firmware.map
 .vscode/c_cpp_properties.json
 .vscode/launch.json
