@@ -33,7 +33,7 @@ DEPS  = $(SRCS:.c=.d)
 .DEFAULT_GOAL := $(BINARY).uf2
 
 $(BINARY).uf2: $(BINARY).bin
-	python uf2conv.py -c -b 0x08004000 -o "$@" "$<"
+	python uf2conv.py -c -b 0x08003000 -o "$@" "$<"
 
 clean::
 	@rm -f $(OBJS)

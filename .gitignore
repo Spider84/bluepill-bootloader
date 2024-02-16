@@ -23,3 +23,5 @@ GTAGS
 src/local.mk
 .vscode/c_cpp_properties.json
 .vscode/launch.json
+workspace.code-workspace
+

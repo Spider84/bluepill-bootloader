@@ -134,7 +134,7 @@ static enum usbd_request_return_codes dfu_control_class_request(usbd_device *usb
     if (req->wIndex != INTF_DFU) {
         return USBD_REQ_NEXT_CALLBACK;
     }
-	dump_usb_request("dfu", req); ////
+	// dump_usb_request("dfu", req); ////
     int status = USBD_REQ_HANDLED;
     switch (req->bRequest) {
         case DFU_GETSTATE: {

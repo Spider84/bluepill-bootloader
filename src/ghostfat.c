@@ -2,7 +2,6 @@
 #include <logger.h>
 #include "uf2.h"
 #include "target.h"
-#include "dmesg.h"
 
 typedef struct {
     uint8_t JumpInstruction[3];
@@ -48,7 +47,7 @@ static size_t flashSize(void) {
 }
 
 //#define DBG NOOP
-#define DBG DMESG
+#define DBG(fmt, ...)
 
 struct TextFile {
     const char name[11];
@@ -59,12 +58,12 @@ struct TextFile {
 
 #define STR0(x) #x
 #define STR(x) STR0(x)
-const char infoUf2File[] = //
+static const char infoUf2File[] = //
     "UF2 Bootloader " UF2_VERSION "\r\n"
     "Model: " PRODUCT_NAME "\r\n"
     "Board-ID: " BOARD_ID "\r\n";
 
-const char indexFile[] = //
+static const char indexFile[] = //
     "<!doctype html>\n"
     "<html>"
     "<body>"
@@ -76,7 +75,7 @@ const char indexFile[] = //
 
 static const struct TextFile info[] = {
     {.name = "INFO_UF2TXT", .content = infoUf2File},
-    {.name = "INDEX   HTM", .content = indexFile},
+    // {.name = "INDEX   HTM", .content = indexFile},
     {.name = "CURRENT UF2"},
 };
 #define NUM_INFO (int)(sizeof(info) / sizeof(info[0]))

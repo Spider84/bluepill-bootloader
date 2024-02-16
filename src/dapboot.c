@@ -17,7 +17,10 @@
  */
 
 #include <string.h>
+#include <libopencm3/cm3/cortex.h>
 #include <libopencm3/cm3/vector.h>
+#include <libopencm3/cm3/nvic.h>
+#include <libopencm3/cm3/systick.h>
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/msc.h>
 #include <libopencm3/stm32/gpio.h>
@@ -49,6 +52,23 @@ static void jump_to_application(void) __attribute__ ((noreturn));
 static void jump_to_application(void) {
     vector_table_t* app_vector_table = (vector_table_t*)APP_BASE_ADDRESS;
 
+    cm_disable_interrupts();
+
+    // Disable all interrupts
+	NVIC_ICER(0) = 0xFFFFFFFF;
+	NVIC_ICER(1) = 0xFFFFFFFF;
+	NVIC_ICER(2) = 0xFFFFFFFF;
+
+	// Clear pendings
+	NVIC_ICPR(0) = 0xFFFFFFFF;
+	NVIC_ICPR(1) = 0xFFFFFFFF;
+	NVIC_ICPR(2) = 0xFFFFFFFF;
+
+	// Stop sys tick
+    systick_counter_disable();
+    systick_interrupt_disable();
+    systick_clear();
+
     /* Use the application's vector table */
     target_relocate_vector_table();
 
@@ -57,6 +77,8 @@ static void jump_to_application(void) {
 
     /* Initialize the application's stack pointer */
     __set_MSP((uint32_t)(app_vector_table->initial_sp_value));
+
+    cm_enable_interrupts();
 
     /* Jump to the application entry point */
     app_vector_table->reset();
@@ -68,8 +90,8 @@ uint32_t msTimer;
 extern int msc_started;
 
 int main(void) {
-    bool appValid = false;
 #ifdef SKIP_BOOTLOADER
+    bool appValid = false;
     appValid = validate_application();
     if (appValid && target_get_force_app()) {
          jump_to_application();
@@ -87,7 +109,7 @@ int main(void) {
     // test_backup();          //  Test backup.
 
     debug_println("target_get_force_bootloader");  // debug_flush();
-    if (target_get_force_bootloader() || !appValid) {
+    if (target_get_force_bootloader() || !validate_application()) {
         {  //  Setup USB
             char serial[USB_SERIAL_NUM_LENGTH+1];
             serial[0] = '\0';
@@ -112,10 +134,10 @@ int main(void) {
 
                 ghostfat_1ms();
 
-                if (appValid && !msc_started && msTimer > 1000) {
-                    debug_println("target_manifest_app");  debug_flush();
-                    target_manifest_app();
-                }
+                // if (!target_get_force_bootloader() && validate_application() && msTimer > 1000) {
+                //     debug_println("target_manifest_app");  debug_flush();
+                //     target_manifest_app();
+                // }
             }
 
             usbd_poll(usbd_dev);

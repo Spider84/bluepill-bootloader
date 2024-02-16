@@ -23,7 +23,7 @@
 /* Reserve 16k for the bootloader, leaving 48k for firmware */
 MEMORY
 {
-	rom (rx) : ORIGIN = 0x08004000, LENGTH = 48K
+	rom (rx) : ORIGIN = 0x08003000, LENGTH = 64K-12k
 	ram (rwx) : ORIGIN = 0x20000000, LENGTH = 20K
 }
 

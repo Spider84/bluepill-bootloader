@@ -495,10 +495,10 @@ static enum usbd_request_return_codes aggregate_callback(
             }
         }
     }
-    if (!(req->bmRequestType == 0x80 && req->bRequest == 0x06)) {
-        //  Dump the packet if not GET_DESCRIPTOR.
-	    dump_usb_request(">> ", req); debug_flush(); ////
-    }
+    // if (!(req->bmRequestType == 0x80 && req->bRequest == 0x06)) {
+    //     //  Dump the packet if not GET_DESCRIPTOR.
+	//     dump_usb_request(">> ", req); debug_flush(); ////
+    // }
 	return USBD_REQ_NEXT_CALLBACK;
 }
 

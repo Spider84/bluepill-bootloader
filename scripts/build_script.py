@@ -12,28 +12,28 @@ print("Current Build targets", BUILD_TARGETS)
 # print env.Dump()
 
 # Convert the built executable in .bin format into UF2 format for flashing via bootloader.
-# e.g. python uf2conv.py --convert --base 0x08004000 --output firmware.uf2 firmware.bin
+# e.g. python uf2conv.py --convert --base 0x08003000 --output firmware.uf2 firmware.bin
 env.AddPostAction(
     "$BUILD_DIR/${PROGNAME}.bin",
     env.VerboseAction(" ".join([
         "python", "src/blink/uf2conv.py", 
             "--convert", 
             "--family", "STM32F1",
-            "--base", "0x08004000", 
+            "--base", "0x08003000", 
             "--output", "$PROJECT_DIR/${PROGNAME}.uf2", 
             "$BUILD_DIR/${PROGNAME}.bin"
     ]), "Building $PROJECT_DIR/${PROGNAME}.uf2")
 )
 
 # For verification, extract the executable in .bin format from the UF2 file.
-# e.g. python2 uf2conv.py --convert --output firmware.bin --base 0x08004000 firmware.uf2
+# e.g. python2 uf2conv.py --convert --output firmware.bin --base 0x08003000 firmware.uf2
 env.AddPostAction(
     "$BUILD_DIR/${PROGNAME}.bin",
     env.VerboseAction(" ".join([
         "python", "src/blink/uf2conv.py", 
             "--convert", 
             "--family", "STM32F1",
-            "--base", "0x08004000", 
+            "--base", "0x08003000", 
             "--output", "$PROJECT_DIR/${PROGNAME}.bin",
             "$PROJECT_DIR/${PROGNAME}.uf2"
     ]), "Building $PROJECT_DIR/${PROGNAME}.bin")
@@ -45,7 +45,7 @@ env.AddPostAction(
 #env.Append(CPPDEFINES=("VECT_TAB_ADDR", 0x123456789))
 
 # General options that are passed to the C compiler (C only; not C++).
-env.Append(CFLAGS=["-std=gnu17"])
+# env.Append(CFLAGS=["-std=gnu17"])
 
 # General options that are passed to the C++ compiler
 env.Append(CXXFLAGS=["-std=gnu++17", "-fwrapv", "-fno-rtti", "-fno-threadsafe-statics"])

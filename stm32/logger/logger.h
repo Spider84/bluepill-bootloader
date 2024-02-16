@@ -5,6 +5,7 @@
 #include <stdint.h>  //  For uint8_t
 #include <stdlib.h>  //  For size_t
 
+#if 0
 #ifdef __cplusplus
 extern "C" {  //  Allows functions below to be called by C and C++ code.
 #endif
@@ -37,4 +38,20 @@ void debug_println(size_t l);
 void debug_println(char ch);
 void debug_println(float f);  //  Note: Always prints with 2 decimal places.  Will not be displayed until debug_flush() is called.
 #endif  //  __cplusplus
+#endif
+
+#define enable_log()
+#define disable_log()
+#define debug_begin(b)
+#define debug_write(c)
+#define debug_print(s)
+#define debug_println(s)
+#define debug_printhex(c)
+#define debug_print_int(i)
+#define debug_print_unsigned(u)
+#define debug_print_char(c)
+#define debug_print_float(f)    //  Note: Always prints with 2 decimal places.
+#define debug_flush()             //  Flush the buffer of the debug log so that buffered data will appear.
+
+
 #endif  //  LOGGER_H_

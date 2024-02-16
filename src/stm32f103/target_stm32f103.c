@@ -186,7 +186,19 @@ bool target_get_force_app(void) {
 }
 
 bool target_get_force_bootloader(void) {
-    bool force = true;
+#if HAVE_BUTTON
+    /* Check if the user button is held down */
+    if (BUTTON_ACTIVE_HIGH) {
+        if (gpio_get(BUTTON_GPIO_PORT, BUTTON_GPIO_PIN)) {
+            return true;
+        }
+    } else {
+        if (!gpio_get(BUTTON_GPIO_PORT, BUTTON_GPIO_PIN)) {
+            return true;
+        }
+    }
+#endif
+
     /* Check the RTC backup register */
     uint32_t cmd = backup_read(BKP0);
     if (cmd == CMD_BOOT) {
@@ -203,20 +215,7 @@ bool target_get_force_bootloader(void) {
     // a reset now should go into app
     backup_write(BKP0, CMD_APP);
 
-#if HAVE_BUTTON
-    /* Check if the user button is held down */
-    if (BUTTON_ACTIVE_HIGH) {
-        if (gpio_get(BUTTON_GPIO_PORT, BUTTON_GPIO_PIN)) {
-            force = true;
-        }
-    } else {
-        if (!gpio_get(BUTTON_GPIO_PORT, BUTTON_GPIO_PIN)) {
-            force = true;
-        }
-    }
-#endif
-
-    return force;
+    return false;
 }
 
 void target_get_serial_number(char* dest, size_t max_chars) {
